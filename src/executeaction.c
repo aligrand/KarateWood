@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static int maxAttackToNextEarnRatio = 10;
+
 void generateTree()
 {
 }
@@ -32,10 +34,6 @@ void drawBoard()
         {
             board[_2Dto1D(i, player.branchWidth, player.treeWidth + (2 * player.branchWidth))] = ITEM_COLOR;
         }
-        else if (player.treedata[0][i] == 3) // draw left destroyed
-        {
-            board[_2Dto1D(i, player.branchWidth, player.treeWidth + (2 * player.branchWidth))] = DESTROYED;
-        }
         else // draw left nothing
         {
             for (Byte j = 0; j < player.branchWidth; j++)
@@ -54,10 +52,6 @@ void drawBoard()
         else if (player.treedata[1][i] == 2) // draw right item
         {
             board[_2Dto1D(i, player.branchWidth + player.treeWidth - 1, player.treeWidth + (2 * player.branchWidth))] = ITEM_COLOR;
-        }
-        else if (player.treedata[1][i] == 3) // draw right destroyed
-        {
-            board[_2Dto1D(i, player.branchWidth + player.treeWidth - 1, player.treeWidth + (2 * player.branchWidth))] = DESTROYED;
         }
         else // draw right nothing
         {
@@ -88,7 +82,8 @@ void printScene()
 {
     printf(INFO);
     printf("Time : %d s\n", player.time);
-    printf("Earn Ratio : %d point\n\n", player.earnRatio);
+    printf("Earn Ratio : %.1fX point --- (%d attack remain)\n", player.earnRatio, maxAttackToNextEarnRatio - player.attackCount);
+    printf("Score : %d\n\n", player.score);
     printf(DEFAULT);
 
     for (Byte i = 0; i < player.boardHeight; i++)

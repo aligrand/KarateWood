@@ -8,7 +8,6 @@ typedef enum
 {
     MoveRight,
     MoveLeft,
-    Attack,
     Save,
     Quit,
     None
@@ -26,15 +25,17 @@ typedef struct
 {
     Byte branchWidth;
     char playerPos; // 'L' : left & 'R' : right
-    Byte *treedata[2]; // a dynamic 2D-array for data in edge of tree +++ 0 : nothing, 1 : branch, 2 : item, 3 : destroyed
+    Byte *treedata[2]; // a dynamic 2D-array for data in edge of tree +++ 0 : nothing, 1 : branch, 2 : item
     Byte playerHeight;
     Byte boardHeight;
     Byte time;
-    Byte earnRatio;
+    float earnRatio;
     float speed;
     Byte speedRemain;
     Byte freeze;
     Byte treeWidth;
+    int attackCount;
+    int score;
 } Player;
 
 void initPlayer();

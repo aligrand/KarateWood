@@ -17,4 +17,6 @@ void initPlayer()
     player.speedRemain = 0;
     player.time = 8;
     player.treeWidth = 3;
+    player.attackCount = 0;
+    player.score = 0;
 }
