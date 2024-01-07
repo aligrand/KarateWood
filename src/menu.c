@@ -1,23 +1,41 @@
 #include "menu.h"
+
 #include "globals.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void newGame()
+static void newGame()
 {
-    Byte height;
+    char change;
+
+    Byte boardHeight;
+    Byte playerHeight;
+    Byte branchWidth;
+    Byte treeWidth;
 
     initPlayer();
 
-    printf("Enter height : ");
-    scanf("%u", &height);
+    printf("Do you want to change preferences? (yY, nN) ");
+    scanf("%c", &change);
 
-    player.boardHeight = height;
+    if (change == 'y' || change == 'Y')
+    {
+        printf("Enter board height : ");
+        scanf("%u", &boardHeight);
+        printf("Enter branch width : ");
+        scanf("%u", &branchWidth);
+        printf("Enter tree width : ");
+        scanf("%u", &treeWidth);
 
-    player.treedata[0] = malloc(height * sizeof(Byte));
-    player.treedata[1] = malloc(height * sizeof(Byte));
+        player.boardHeight = boardHeight;
+        player.branchWidth = branchWidth;
+        player.treeWidth = treeWidth;
+    }
+
+    player.treedata[0] = malloc(player.boardHeight * sizeof(Byte));
+    player.treedata[1] = malloc(player.boardHeight * sizeof(Byte));
 
     memset(player.treedata[0], 0, player.boardHeight);
     memset(player.treedata[1], 0, player.boardHeight);
@@ -29,7 +47,7 @@ void newGame()
         board[i] = malloc(7 * sizeof(char));
     }
 
-    system("cls");
+    printf(DEL_SCREEN);
 }
 
 void showMenu()
