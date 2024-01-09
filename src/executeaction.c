@@ -3,8 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "code.h"
+
 static int maxAttackToNextEarnRatio = 10;
-static char *itemName = "";
+static char *note = "";
 
 static void generateTree()
 {
@@ -60,13 +62,13 @@ static void swapDownTreeData()
     player.treedata[1][0] = 0;
 }
 
-static Status processAction(Action playerACtion)
+static Status processAction(Action playerAction)
 {
-    if (playerACtion == MoveLeft)
+    if (playerAction == MoveLeft)
     {
         player.playerPos = 'L';
         ++player.attackCount;
-        itemName = "";
+        note = "";
         if (player.time + 1 <= 8)
         {
             ++player.time;
@@ -76,7 +78,7 @@ static Status processAction(Action playerACtion)
             --player.freeze;
         }
 
-        if (player.treedata[0][player.boardHeight - 1] == 1) // branch
+        if (player.treedata[0][player.boardHeight - 2] == 1) // branch
         {
             return Loss;
         }
@@ -89,17 +91,17 @@ static Status processAction(Action playerACtion)
             case Speed:
                 player.speed = 1.2;
                 player.speedRemain = 5;
-                itemName = "Speed";
+                note = "Item was Speed";
                 break;
 
             case Freeze:
                 player.freeze = 10;
-                itemName = "Freese";
+                note = "Item was Freese";
                 break;
 
             case Double:
                 player.earnRatio *= 2;
-                itemName = "Double";
+                note = "Item was Double";
                 break;
 
             case Time:
@@ -111,7 +113,7 @@ static Status processAction(Action playerACtion)
                 {
                     player.time += 2;
                 }
-                itemName = "Time";
+                note = "Item was Time";
                 break;
 
             default:
@@ -128,12 +130,13 @@ static Status processAction(Action playerACtion)
         player.score += player.earnRatio;
 
         swapDownTreeData();
+        generateTree();
     }
-    else if (playerACtion == MoveRight)
+    else if (playerAction == MoveRight)
     {
         player.playerPos = 'R';
         ++player.attackCount;
-        itemName = "";
+        note = "";
         if (player.time + 1 <= 8)
         {
             ++player.time;
@@ -147,7 +150,7 @@ static Status processAction(Action playerACtion)
         {
             return Loss;
         }
-        else if (player.treedata[1][player.boardHeight - 2] == 2) // item
+        else if (player.treedata[1][player.boardHeight - 1] == 2) // item
         {
             Item item = rand() % 4;
 
@@ -156,17 +159,17 @@ static Status processAction(Action playerACtion)
             case Speed:
                 player.speed = 1.2;
                 player.speedRemain = 5;
-                itemName = "Speed";
+                note = "Item was Speed";
                 break;
 
             case Freeze:
                 player.freeze = 10;
-                itemName = "Freese";
+                note = "Item was Freese";
                 break;
 
             case Double:
                 player.earnRatio *= 2;
-                itemName = "Double";
+                note = "Item was Double";
                 break;
 
             case Time:
@@ -178,7 +181,7 @@ static Status processAction(Action playerACtion)
                 {
                     player.time += 2;
                 }
-                itemName = "Time";
+                note = "Item was Time";
                 break;
 
             default:
@@ -195,14 +198,35 @@ static Status processAction(Action playerACtion)
         player.score += player.earnRatio;
 
         swapDownTreeData();
+        generateTree();
     }
-    else if (playerACtion == Save)
+    else if (playerAction == Save)
     {
+        FILE *loadFile = NULL;
+        Byte *loadData = NULL;
+        Byte *loadDataArr[2] = {NULL, NULL};
+
+        loadFile = fopen("save.bin", "wb");
+
+        loadData = modEncode(&player, sizeof(Player), 12);
+        loadDataArr[0] = modEncode(player.treedata[0], player.boardHeight, 12);
+        loadDataArr[1] = modEncode(player.treedata[1], player.boardHeight, 12);
+
+        fwrite(loadData, sizeof(Player), 1, loadFile);
+        fwrite(loadDataArr[0], player.boardHeight, 1, loadFile);
+        fwrite(loadDataArr[1], player.boardHeight, 1, loadFile);
+        fclose(loadFile);
+
+        free(loadData);
+        free(loadDataArr[0]);
+        free(loadDataArr[1]);
+
+        note = "Game Saved";
     }
-    else // playerACtion == Quit
+    else // playerAction == Quit
     {
         printf(DEFAULT);
-        printf(DEL_SCREEN);
+        printf(CLS_SCREEN);
         exit(0);
     }
 
@@ -278,12 +302,12 @@ static void printScene()
     printf(INFO);
     printf("Earn Ratio : %.1fX point --- (%d attack remain)\n", player.earnRatio, maxAttackToNextEarnRatio - player.attackCount);
     printf("Score : %d\n", player.score);
-    printf("Help : aA=left, dD=right, qQ=quit\n\n");
+    printf("Help : aA=left, dD=right, qQ=quit, gG=save\n\n");
     printf(SAVE_CURSOR);
-    if (itemName != "")
+    if (note != "")
     {
         printf(MOVE_CURSOR(2, 50)"*************************");
-        printf(MOVE_CURSOR(3, 50)"* %s           ", itemName);
+        printf(MOVE_CURSOR(3, 50)"* %s           ", note);
         printf(MOVE_CURSOR(4, 50)"*************************");
     }
     printf(RESTORE_CURSOR);
@@ -320,8 +344,6 @@ Status execAction(Action playerAction)
         {
             return Loss;
         }
-
-        generateTree();
     }
     drawBoard();
     printScene();

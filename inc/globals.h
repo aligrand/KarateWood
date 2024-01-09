@@ -54,9 +54,9 @@ void initPlayer();
 #define DEFAULT "\033[49m" // default
 #define INFO "\033[41m" // red
 #define DESTROYED "\033[45m" // magenta
-#define DEL_LINE "\033[1K" // erase line in screen
+#define DEL_LINE "\033[1K\033[1;1H" // erase line in screen
 #define DEL_TOEND "\033[0J" // erase from cursor until end of screen
-#define DEL_SCREEN "\033[2J" // erase screen
+#define CLS_SCREEN "\033[2J\033[1;1H" // erase screen and go to first of terminal
 #define MOVE_CURSOR(line, col) "\033["#line";"#col"H" // move cursor in screen
 #define SAVE_CURSOR "\033[s" // save position of cursor
 #define RESTORE_CURSOR "\033[u" // restore last saved cursor position

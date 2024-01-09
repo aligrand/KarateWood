@@ -11,4 +11,5 @@ add_executable(KarateWood src/karatewood.c
 				src/executeaction.c
 				src/menu.c
 				src/run.c
-				src/globals.c)
+				src/globals.c
+				src/code.c)

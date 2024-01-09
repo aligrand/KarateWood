@@ -13,7 +13,7 @@ static void loseShow()
 {
     printf(DEFAULT);
 
-    printf(DEL_SCREEN);
+    printf(CLS_SCREEN);
 
     printf("------------\n"
             "YOU LOSE ...\n"
@@ -81,14 +81,17 @@ void runGame()
 
     srand(time(NULL));
     
-    printf(DEL_SCREEN);
-    printf(MOVE_CURSOR(0, 0));
+    printf(CLS_SCREEN);
 
     pthread_create(&pthrID, NULL, timeProcess, &gameStatus);
 
-    while (gameStatus == Normal)
+    while (1)
     {
         gameStatus = execAction(playerAction);
+        if (gameStatus == Loss)
+        {
+            break;
+        }
         playerAction = getAction();
     }
 
