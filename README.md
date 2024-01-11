@@ -1,2 +1,4 @@
 # KarateWood
-a mini game (Karate Kiddo) in C language
+A mini game (Karate Kiddo) in C language
+# Build
+Use CMakeLists.txt in project
